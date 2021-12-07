@@ -26,9 +26,6 @@ public class Posts extends BaseTimeEntity {
     @Column(length = 500, nullable =false)
     private String title;
 
-    @Column(columnDefinition = "TEXT", nullable = false)
-    private String item_content;
-
     @Column(nullable = false)
     private int user_id;
     
@@ -36,20 +33,42 @@ public class Posts extends BaseTimeEntity {
     private long item_id;
     
     @Column(nullable = false)
-    private int is_sell;
+    private int sell_state;
     
     @Column(nullable = false)
     private int price;
     
+	@Column()
+	private String nft_description;
+	@Column()
+	private String nft_hash;
+	
+	//아이템 아이디를 16진수롤 변환해서 저장
+	@Column()
+	private String token_id ;
+
+	@Column()
+	private String creator;
+	@Column()
+	private String image_path;
+	@Column()
+	private String owner;
+    
 
     @Builder
-    public Posts(String title, String item_content, int user_id, long item_id, int price, int is_sell) {
-        this.title = title;
-        this.item_content = item_content;
+    public Posts(String title, int user_id, long item_id, int sell_state, int price, String nft_description, String nft_hash, String token_id, String creator, String image_path, String owner  ) {
+        this.title = title;    
         this.user_id = user_id ;
         this.item_id = item_id;
-        this.is_sell = is_sell ;
+        this.sell_state = sell_state ;
         this.price = price ;
+        this.nft_description = nft_description;
+        this.nft_hash = nft_hash;
+        this.token_id = token_id;
+        this.creator = creator;
+        this.image_path = image_path;
+        this.owner = owner;
+        
     }
 
     // price 업데이트

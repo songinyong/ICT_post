@@ -47,7 +47,6 @@ public class PostsApiControllerTest {
 		String content = "content";
 		PostsSaveRequestDto requestDto = PostsSaveRequestDto.builder()
 				.title(title)
-				.item_content(content)
 				.price(0)
 				.user_id(100000)
 				.item_id(1000000)
@@ -61,7 +60,7 @@ public class PostsApiControllerTest {
 		assertThat(responseEntity.getBody()).isGreaterThan(0L);
 		List<Posts> all = postsRepository.findAll();
 		assertThat(all.get(0).getTitle()).isEqualTo(title);
-		assertThat(all.get(0).getItem_content()).isEqualTo(content);
+		
 	}
 
 	
@@ -70,7 +69,7 @@ public class PostsApiControllerTest {
         //given
         Posts savedPosts = postsRepository.save(Posts.builder()
                 .title("title")
-                .item_content("content")
+              
                 .price(0)
 				.user_id(100000)
 				.item_id(1000000)

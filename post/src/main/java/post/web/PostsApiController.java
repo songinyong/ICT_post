@@ -2,6 +2,7 @@ package post.web;
 
 import java.util.List;
 
+import org.json.simple.JSONObject;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
@@ -58,5 +59,13 @@ public class PostsApiController {
     	return postsService.paging(pageRequest);
     }
 	
-	
+    @GetMapping("/posts/page/{wallet_address}")
+    public Page<PagingDto> pagebywallet(@PageableDefault(size=10, sort="createdDate") Pageable pageRequest, @PathVariable String wallet_address) {
+    	return postsService.nftinfotoclient(pageRequest, wallet_address);
+    }
+    
+	@PostMapping("/posts/wallet")
+	public String test() {
+		return postsService.nftinfoFromblock("0xbc7cc9517400cff0ec953efb585e424301a395b0");
+	}
 }

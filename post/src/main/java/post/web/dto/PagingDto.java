@@ -12,25 +12,37 @@ public class PagingDto {
 
 	private Long id ;
 	private String title ;
-	private String item_content ;
+	
 	private int user_id;
 	private long item_id;
-	private int is_sell;
+	private int sell_state;
 	private int price;
 	private LocalDateTime createdDate ;
 	private LocalDateTime ModifiedDate ;
+	private String nft_description;
+	private String nft_hash;
+	private String token_id;
+	private String creator;
+	private String image_path ;
+	private String owner;
 
 	
 	public PagingDto(Posts entity) {
         this.id = entity.getId();
         this.title = entity.getTitle();
-        this.item_content = entity.getItem_content();
         this.user_id = entity.getUser_id();
         this.item_id = entity.getItem_id();
-        this.is_sell = entity.getIs_sell();
+        this.sell_state = entity.getSell_state();
         this.price = entity.getPrice();
         this.createdDate = entity.getCreatedDate();
         this.ModifiedDate = entity.getModifiedDate();
+        this.nft_description = entity.getNft_description();
+        this.nft_hash = entity.getNft_hash();
+        this.token_id = entity.getToken_id();
+        this.creator = entity.getCreator();
+        this.image_path = entity.getImage_path();
+        this.owner = entity.getOwner();
     
 	}
 }
+
