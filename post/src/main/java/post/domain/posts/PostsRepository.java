@@ -17,6 +17,6 @@ public interface PostsRepository extends JpaRepository<Posts, Long> {
     
     Page<Posts> findAll(Pageable pageable);
     
-    @Query("SELECT p FROM Posts p WHERE p.owner =?2")
+    @Query("SELECT p FROM Posts p WHERE p.owner =:wallet")
     Page<Posts> findWallet(Pageable pageable, String wallet);
 }

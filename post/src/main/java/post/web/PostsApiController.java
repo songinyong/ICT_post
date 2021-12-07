@@ -61,6 +61,7 @@ public class PostsApiController {
 	
     @GetMapping("/posts/page/{wallet_address}")
     public Page<PagingDto> pagebywallet(@PageableDefault(size=10, sort="createdDate") Pageable pageRequest, @PathVariable String wallet_address) {
+    	System.out.println(wallet_address);
     	return postsService.nftinfotoclient(pageRequest, wallet_address);
     }
     

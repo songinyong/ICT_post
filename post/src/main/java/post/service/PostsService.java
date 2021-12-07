@@ -114,7 +114,7 @@ public class PostsService {
     
     //프젝 발표 이후 수정
     public Page<PagingDto> nftinfotoclient(Pageable pageRequest, String wallet_address) {
-    	nftinfoFromblock(wallet_address);
+    	//nftinfoFromblock(wallet_address);
     	Page<Posts> postsList = postsRepository.findWallet(pageRequest, wallet_address);
     	
     	Page<PagingDto> pagingList = postsList.map(PagingDto::new);
