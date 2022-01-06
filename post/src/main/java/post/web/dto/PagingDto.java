@@ -1,3 +1,7 @@
+/*
+ * DB에서 게시물 정보들을 페이징 형태로 불러오는 dto 
+ * */
+
 package post.web.dto;
 
 import java.time.LocalDateTime;
@@ -12,9 +16,6 @@ public class PagingDto {
 
 	private Long id ;
 	private String title ;
-	
-	private int user_id;
-	private long item_id;
 	private int sell_state;
 	private int price;
 	private LocalDateTime createdDate ;
@@ -30,8 +31,6 @@ public class PagingDto {
 	public PagingDto(Posts entity) {
         this.id = entity.getId();
         this.title = entity.getTitle();
-        this.user_id = entity.getUser_id();
-        this.item_id = entity.getItem_id();
         this.sell_state = entity.getSell_state();
         this.price = entity.getPrice();
         this.createdDate = entity.getCreatedDate();

@@ -1,3 +1,11 @@
+/*
+ * 
+ * 게시물 서비스 기능을 담당하는 서비스 계층
+ * 
+ * 21.12.08: ICT 발표전 최종 수정일 
+ * 
+ * */
+
 package post.service;
 
 import java.util.List;
@@ -8,6 +16,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -39,13 +48,21 @@ public class PostsService {
     	return postsRepository.save(requestDto.toEntity()).getId();
     }
     
-    //게시물 가격 수정 기능
+    /*게시물 가격 수정 기능
+     * 21.01.03 수정사항: sell_state가 0일때만 가격을 수정할 수 있도록 해야함
+     * */
     @Transactional
     public Long update(Long id, PostsUpdateRequestDto requestDto) {
     	Posts posts = postsRepository.findById(id).orElseThrow(()-> new IllegalArgumentException("존재하지 않는 게시물 이거나 삭제된 게시물입니다."+id));
-    	posts.update(requestDto.getPrice());
+    	posts.update(requestDto.getSell_state());
     	return id ;
     }
+    
+    /*nft아이템 전체 정보 수정 
+     * 수정 가능 대상: nft_description, title, price
+     * 
+     * 최초작성일: 21.01.03
+     * */
     
     //게시물 id 기준 게시물의 정보 불러오기 기능
     public PostsResponseDto findById(Long id) {
@@ -54,16 +71,36 @@ public class PostsService {
     	
     	return new PostsResponseDto(entity);
     }
-    //사용자 id 기준으로 작성한 게시물들의 id 및 정보 불러오기 기능
-
+   
+    
+    /*사용자 id 기준으로 작성한 게시물들의 id 및 정보 불러오기 기능
+     * 22.01.04 사용자 ID를 직접 저장하기 않기로 설계가 수정되서 
+     * 사용하지 않기로함
     @Transactional(readOnly = true)
     public List<PostsResponseDto> findUsersPosts(int user_id) {
         return postsRepository.findUsersPosts(user_id).stream()
                 .map(PostsResponseDto::new)
                 .collect(Collectors.toList());
     }
+    */
     
-    //게시물 거래 완료시 게시물의 현재 상태 변경 기능
+    /*sell_state 변경하기
+    0일때 보관중, 1일때 장터에 올림, 2 거래 진행중
+    사용자가 변경 할 수 있는 범위는 0~1
+    
+     최초작성일: 21.01.03
+    */
+    @Transactional
+    public boolean updateSell_state(String token_id) {
+    	Posts posts = postsRepository.findBytokenID(token_id).orElseThrow(()-> new IllegalArgumentException("존재하지 않는 게시물 이거나 삭제된 게시물입니다."+token_id));
+    	
+    	if(posts.getSell_state() != 0 || posts.getSell_state() != 1) {
+    	posts.update(1);
+    	return true ; }
+    	
+    	else return false ;
+    }
+    
     
     //삭제기능
     @Transactional
@@ -74,6 +111,7 @@ public class PostsService {
     	return id;
     }
     
+    //게시물을 페이지 형태로 보여줌
     public Page<PagingDto> paging(Pageable pageRequest) {
     	
     	Page<Posts> postsList = postsRepository.findAll(pageRequest);
@@ -83,7 +121,7 @@ public class PostsService {
     	return pagingList ;
     }
     
-    //블록체인 서비스에서 정보를 받아옴
+    //블록체인 서비스로부터 사용자 지갑별로 가지고 있는 nft 아이템 정보를 받아옴
     public String nftinfoFromblock(String wallet_address) {
 		MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
 		
@@ -112,6 +150,55 @@ public class PostsService {
 		return "hey" ;
     }
     
+    /*
+     * 블록체인 아이템 DB로부터 정보를 받아온뒤 nft token_id를 기준으로 DB에 없는 아이템들을 추가한다.
+     * crontab으로 동기화 시행
+     * */
+    public ResponseEntity<JSONObject> recvNftInfofromBlckdb() {
+		MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
+		
+		HttpHeaders headers = new HttpHeaders();
+		headers.add("Content-type", "application/json;charset=utf-8");
+		
+		HttpEntity<MultiValueMap<String, String>> entity = new HttpEntity<>(params, headers); 
+		RestTemplate rt = new RestTemplate();
+		ObjectMapper mapper = new ObjectMapper();
+		
+		try {
+		JsonNode response =rt.getForObject("http://13.125.152.144:5555/chain/findAllnfts", JsonNode.class,entity );
+    	
+		
+    	JsonNode items =  response.get("items");
+    	System.out.println(items);
+    	List<PostsSaveRequestDto> accountList = mapper.convertValue(
+    		    items,
+    		    new TypeReference<List<PostsSaveRequestDto>>(){}
+    		);
+    	//동기화하여 추가한 아이템 수 체크
+    	int count = 0;
+    	
+    	for(int i =0; i<accountList.size(); i++) {
+    		if(postsRepository.checkID(accountList.get(i).getToken_id()).isEmpty()) {
+    		postsRepository.save(accountList.get(i).toEntity());
+    		count++;
+    		
+    	    } 
+    	}
+		
+		JSONObject resultObj = new JSONObject();  
+		resultObj.put("result","true");
+		resultObj.put("count",count);
+    	
+    	return new ResponseEntity<JSONObject>(resultObj, HttpStatus.ACCEPTED);
+    	
+		} catch (Exception e) {
+			JSONObject resultObj = new JSONObject();  
+			resultObj.put("result","false");
+	    	return new ResponseEntity<JSONObject>(resultObj, HttpStatus.ACCEPTED);
+		}
+    }
+    
+    //DB에 저장된 지갑 주소 기반으로 게시물들의 정보를 페이지 형태로 불러옴
     //프젝 발표 이후 수정
     public Page<PagingDto> nftinfotoclient(Pageable pageRequest, String wallet_address) {
     	//nftinfoFromblock(wallet_address);

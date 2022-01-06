@@ -48,8 +48,6 @@ public class PostsApiControllerTest {
 		PostsSaveRequestDto requestDto = PostsSaveRequestDto.builder()
 				.title(title)
 				.price(0)
-				.user_id(100000)
-				.item_id(1000000)
 				.build();
 		
 		String url = "http://localhost:" + port + "posts";
@@ -71,15 +69,13 @@ public class PostsApiControllerTest {
                 .title("title")
               
                 .price(0)
-				.user_id(100000)
-				.item_id(1000000)
                 .build());
 
         Long updateId = savedPosts.getId();
-        int price = 100 ;
+        int sell_state = 1 ;
 
         PostsUpdateRequestDto requestDto = PostsUpdateRequestDto.builder()
-                .price(price)
+                .sell_state(sell_state)
                 .build();
 
         String url = "http://localhost:" + port + "/posts" + updateId;
@@ -92,7 +88,7 @@ public class PostsApiControllerTest {
         assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.OK);
 		assertThat(responseEntity.getBody()).isGreaterThan(0L);
         List<Posts> all = postsRepository.findAll();
-        assertThat(all.get(0).getPrice()).isEqualTo(price);
+        assertThat(all.get(0).getPrice()).isEqualTo(sell_state);
         
     }
 

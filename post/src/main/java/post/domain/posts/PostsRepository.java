@@ -1,6 +1,7 @@
 package post.domain.posts;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -12,10 +13,22 @@ public interface PostsRepository extends JpaRepository<Posts, Long> {
     @Query("SELECT p FROM Posts p ORDER BY p.id DESC")
     List<Posts> findAllDesc();
     
-    @Query("SELECT p FROM Posts p WHERE p.user_id =?1 ORDER BY p.id DESC ")
-    List<Posts> findUsersPosts(int user_id);
+    //sell_state 기준으로 모든 게시물 조회
+   @Query("SELECT p FROM Posts p WHERE p.sell_state =?1 ORDER BY p.id DESC ")
+   List<Posts> findUsersPosts(int sell_state);
+   
+   @Query("SELECT p FROM Posts p WHERE p.sell_state =?1 AND p.token_id=?2")
+   Posts CheckSellState(int sell_state, String token_id);
+   
+   @Query("SELECT p FROM Posts p WHERE p.token_id=?1")
+   Optional<Posts> findBytokenID(String token_id);
+   
+   @Query(value="SELECT p.token_id FROM Posts p WHERE p.token_id =?1 ", nativeQuery = true)
+	List<String> checkID(String token_id);
     
     Page<Posts> findAll(Pageable pageable);
+    
+    
     
     @Query("SELECT p FROM Posts p WHERE p.owner =:wallet")
     Page<Posts> findWallet(Pageable pageable, String wallet);

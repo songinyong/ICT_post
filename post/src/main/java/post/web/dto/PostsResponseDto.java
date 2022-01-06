@@ -1,6 +1,11 @@
+/*
+ * PostsR
+ * */
+
 package post.web.dto;
 
 import java.time.LocalDateTime;
+
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -12,12 +17,11 @@ public class PostsResponseDto {
 
 	private Long id ;
 	private String title ;
-	
-	private int user_id;
-	private long item_id;
 	private int sell_state;
 	private int price;
+	
 	private LocalDateTime createdDate ;
+	
 	private LocalDateTime ModifiedDate ;
 	private String nft_description;
 	private String nft_hash;
@@ -30,8 +34,6 @@ public class PostsResponseDto {
 	public PostsResponseDto(Posts entity) {
         this.id = entity.getId();
         this.title = entity.getTitle();
-        this.user_id = entity.getUser_id();
-        this.item_id = entity.getItem_id();
         this.sell_state = entity.getSell_state();
         this.price = entity.getPrice();
         this.createdDate = entity.getCreatedDate();

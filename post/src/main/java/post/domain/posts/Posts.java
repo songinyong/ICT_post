@@ -1,5 +1,7 @@
 package post.domain.posts;
 
+import java.time.LocalDateTime;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -17,7 +19,7 @@ import post.domain.BaseTimeEntity;
 @NoArgsConstructor
 @Entity
 @Table(name="posts")
-public class Posts extends BaseTimeEntity {
+public class Posts  {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -26,12 +28,6 @@ public class Posts extends BaseTimeEntity {
     @Column(length = 500, nullable =false)
     private String title;
 
-    @Column(nullable = false)
-    private int user_id;
-    
-    @Column(nullable = false)
-    private long item_id;
-    
     @Column(nullable = false)
     private int sell_state;
     
@@ -53,14 +49,17 @@ public class Posts extends BaseTimeEntity {
 	private String image_path;
 	@Column()
 	private String owner;
+	@Column()
+	private LocalDateTime createdDate ;
+	
+	@Column()
+	private LocalDateTime modifiedDate ;
     
 
     @Builder
-    public Posts(String title, int user_id, long item_id, int sell_state, int price, String nft_description, String nft_hash, String token_id, String creator, String image_path, String owner  ) {
+    public Posts(String title, int price, String nft_description, String nft_hash, String token_id, String creator, String image_path, String owner, LocalDateTime createdDate, LocalDateTime modifiedDate ) {
         this.title = title;    
-        this.user_id = user_id ;
-        this.item_id = item_id;
-        this.sell_state = sell_state ;
+        this.sell_state = 0 ;
         this.price = price ;
         this.nft_description = nft_description;
         this.nft_hash = nft_hash;
@@ -68,9 +67,10 @@ public class Posts extends BaseTimeEntity {
         this.creator = creator;
         this.image_path = image_path;
         this.owner = owner;
+        this.createdDate = createdDate;
+        this.modifiedDate = modifiedDate;
         
     }
-
     // price 업데이트
     public void update(int price) {
         this.price = price;
