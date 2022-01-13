@@ -237,10 +237,10 @@ public class PostsService {
     }
     
     //필터 조회 - 장터 판매중인 아이템 전체 조회, 지갑 기준 자신의 아이템은 표시 되지 않음
-    public Page<PagingDto> findByNotWalletAndSellState(Pageable pageRequest, PageGetDto pgdto) {
+    public Page<PagingDto> findByNotWalletAndSellState(String owner, Pageable pageRequest) {
     	
     	//결과 값이 null 이여도 Page가 빈 객체로 return해줌 
-    	Page<Posts> postsList = postsRepository.findNotWalletAndSellState(pageRequest, pgdto.getOwner(), pgdto.getSell_state());		
+    	Page<Posts> postsList = postsRepository.findNotWalletAndSellState(pageRequest, owner, 1);		
     	Page<PagingDto> pagingList = postsList.map(PagingDto::new);
     	
     	return pagingList ;

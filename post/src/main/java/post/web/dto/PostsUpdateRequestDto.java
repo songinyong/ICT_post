@@ -14,10 +14,10 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class PostsUpdateRequestDto {
 
-	private int price;
+	private long price;
 	
 	@Builder
-	public PostsUpdateRequestDto(int price) {
+	public PostsUpdateRequestDto(long price) {
 		this.price = price ;
 	}
 }

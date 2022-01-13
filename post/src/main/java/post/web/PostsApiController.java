@@ -75,9 +75,9 @@ public class PostsApiController {
     }
     
     //특정 지갑 주소를 제외한 전체 AND sell_state 기준 페이지로 출력
-    @PostMapping("/posts/Market")
-    public Page<PagingDto> pageNotwalletandsellState(@PageableDefault(size=10, sort="createdDate") Pageable pageRequest, @RequestBody PageGetDto pgdto) {
-    	return postsService.findByNotWalletAndSellState(pageRequest, pgdto);
+    @PostMapping("/posts/Market/{owner}")
+    public Page<PagingDto> pageNotwalletandsellState(@PathVariable String owner, @PageableDefault(size=10, sort="createdDate") Pageable pageRequest) {
+    	return postsService.findByNotWalletAndSellState(owner, pageRequest);
     }
     
     //전체 게시물들의 정보를 페이지 형태로 불러옴

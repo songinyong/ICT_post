@@ -23,7 +23,7 @@ public class PostsSaveRequestDto {
 	private Long id ;
 	private String title ;
 	private int sell_state;
-	private int price;
+	private long price;
 	@JsonDeserialize(using=LocalDateTimeDeserializer.class)
 	private LocalDateTime createdDate ;
 	@JsonDeserialize(using=LocalDateTimeDeserializer.class)
@@ -39,7 +39,7 @@ public class PostsSaveRequestDto {
 	//is_sell은 판매중 0 , 거래중 1, 판매완료 2 3개의 상태를 가지고 있으면 기본적으로 등록시에는 0이 디폴트이다.
 	
     @Builder
-    public PostsSaveRequestDto(String title, int price, String nft_description, String nft_hash, String token_id, String creator, String image_path, String owner, LocalDateTime createdDate, LocalDateTime modifiedDate ) {
+    public PostsSaveRequestDto(String title, long price, String nft_description, String nft_hash, String token_id, String creator, String image_path, String owner, LocalDateTime createdDate, LocalDateTime modifiedDate ) {
         this.title = title;    
        
         this.price = price ;

@@ -19,7 +19,7 @@ public class Scheduler {
 	@Autowired
 	private PostsService postsService;
 	
-	//3분에 한번 동기화를 시행한다.
+	//2분에 한번 동기화를 시행한다.
     @Scheduled(cron = "0 0/2 * * * ?") 
     public void runSync() { 
     	postsService.recvNftInfofromBlckdb();
