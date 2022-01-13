@@ -1,14 +1,11 @@
 package post.web;
 
-import java.util.List;
-
 import org.json.simple.JSONObject;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -18,9 +15,10 @@ import org.springframework.web.bind.annotation.RestController;
 
 import lombok.RequiredArgsConstructor;
 import post.service.PostsService;
+import post.web.dto.NftTradeDto;
+import post.web.dto.PageGetDto;
 import post.web.dto.PagingDto;
 import post.web.dto.PostsResponseDto;
-import post.web.dto.PostsSaveRequestDto;
 import post.web.dto.PostsUpdateRequestDto;
 
 @RequiredArgsConstructor
@@ -51,21 +49,35 @@ public class PostsApiController {
 	}
 	*/
 	
-	@GetMapping("/posts/state/{token_id}")
-	public boolean UpdateSellState (@PathVariable String token_id) {
-		return postsService.updateSell_state(token_id);
-	}
 	
-	//게시물 정보 수정 api (현재 수정중)
-    @PutMapping(path="/posts/{id}", consumes="application/json")
-    public Long update(@PathVariable Long id, @RequestBody PostsUpdateRequestDto requestDto) {
-        return postsService.update(id, requestDto);
+	//게시물 price 변경
+    @PutMapping(path="/posts/price/{token_id}", consumes="application/json")
+    public boolean update(@PathVariable String token_id, @RequestBody PostsUpdateRequestDto requestDto) {
+        return postsService.updatePrice(token_id, requestDto);
     }
     
-    //게시물 삭제
+    //게시물 sell_state 변경
+    @PutMapping(path="/posts/sell_state/{token_id}", consumes="application/json")
+    public boolean sell_Update(@PathVariable String token_id) {
+        return postsService.updateSell_state(token_id);
+    }
+    
+    /*게시물 삭제
     @DeleteMapping(path="/posts/delete/{id}")
     public Long delete(@PathVariable Long id) {
         return postsService.deletePosts(id);
+    }*/
+    
+    //특정 지갑 주소 and sell_state 기준 페이지로 출력
+    @PostMapping("/posts/MyPage")
+    public Page<PagingDto> pagewalletandsellState(@PageableDefault(size=10, sort="createdDate") Pageable pageRequest, @RequestBody PageGetDto pgdto) {
+    	return postsService.findByWalletAndSellState(pageRequest, pgdto);
+    }
+    
+    //특정 지갑 주소를 제외한 전체 AND sell_state 기준 페이지로 출력
+    @PostMapping("/posts/Market")
+    public Page<PagingDto> pageNotwalletandsellState(@PageableDefault(size=10, sort="createdDate") Pageable pageRequest, @RequestBody PageGetDto pgdto) {
+    	return postsService.findByNotWalletAndSellState(pageRequest, pgdto);
     }
     
     //전체 게시물들의 정보를 페이지 형태로 불러옴
@@ -90,5 +102,10 @@ public class PostsApiController {
 	@GetMapping("/posts/blck/item")
 	public ResponseEntity<JSONObject> testPost() {
 		return postsService.recvNftInfofromBlckdb();
+	}
+	//nft 거래 api
+	@PostMapping("/posts/trade")
+	public ResponseEntity<JSONObject> nftTrade(@RequestBody NftTradeDto nfttradedto) {
+		return postsService.nfttrade(nfttradedto);
 	}
 }

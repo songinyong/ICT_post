@@ -12,13 +12,12 @@ import lombok.NoArgsConstructor;
 
 @Getter
 @NoArgsConstructor
-
 public class PostsUpdateRequestDto {
 
-	private int sell_state;
+	private int price;
 	
 	@Builder
-	public PostsUpdateRequestDto(int sell_state) {
-		this.sell_state = sell_state ;
+	public PostsUpdateRequestDto(int price) {
+		this.price = price ;
 	}
 }

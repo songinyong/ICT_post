@@ -29,7 +29,12 @@ public interface PostsRepository extends JpaRepository<Posts, Long> {
     Page<Posts> findAll(Pageable pageable);
     
     
-    
     @Query("SELECT p FROM Posts p WHERE p.owner =:wallet")
     Page<Posts> findWallet(Pageable pageable, String wallet);
+    
+    @Query("SELECT p FROM Posts p WHERE p.owner =:wallet AND p.sell_state = :sell_state")
+    Page<Posts> findWalletAndSellState(Pageable pageable, String wallet, int sell_state);
+    
+    @Query("SELECT p FROM Posts p WHERE p.owner NOT IN :wallet AND p.sell_state = :sell_state")
+    Page<Posts> findNotWalletAndSellState(Pageable pageable, String wallet, int sell_state);
 }

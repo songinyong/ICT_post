@@ -9,11 +9,10 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
-import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import post.domain.BaseTimeEntity;
+
 
 @Getter
 @NoArgsConstructor
@@ -74,5 +73,9 @@ public class Posts  {
     // price 업데이트
     public void update(int price) {
         this.price = price;
+    }
+    
+    public void stateUpdate(int sell_state) {
+    	this.sell_state = sell_state;
     }
 }
