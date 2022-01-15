@@ -45,13 +45,6 @@ public class PostsService {
     private final PostsRepository postsRepository;
     
     
-    /*게시물 저장 기능
-    @Transactional
-    public Long save(PostsSaveRequestDto requestDto) {
-    	return postsRepository.save(requestDto.toEntity()).getId();
-    }
-    */
-    
     /*게시물 가격 수정 기능
      * 21.01.03 수정사항: sell_state가 0일때만 가격을 수정할 수 있도록 해야함
      * 21.01.11 결과값 json으로 수정 필요
@@ -60,7 +53,7 @@ public class PostsService {
     public boolean updatePrice(String token_id, PostsUpdateRequestDto rdto) {
     	if(!postsRepository.findBytokenID(token_id).isEmpty()) {
     		Optional<Posts> posts = postsRepository.findBytokenID(token_id);
-    		
+    		System.out.println(rdto.getPrice());
         	if(posts.get().getSell_state() == 0 && rdto.getPrice() >= 0 ) {
             	posts.get().update(rdto.getPrice());
             	return true ; }
@@ -121,6 +114,7 @@ public class PostsService {
     
     /*삭제기능
      * 테스트 해보기용 Delete는 사용하면 안됨
+     * 후에 장바구니 기능을 위해 참고용으로 남겨둠
     @Transactional
     public Long deletePosts(Long id) {
     	Posts entity = postsRepository.findById(id)
@@ -166,53 +160,7 @@ public class PostsService {
 		return "hey" ;
     }
     
-    /*
-     * 블록체인 아이템 DB로부터 정보를 받아온뒤 nft token_id를 기준으로 DB에 없는 아이템들을 추가한다.
-     * crontab으로 동기화 시행
-     * */
-    public ResponseEntity<JSONObject> recvNftInfofromBlckdb() {
-		MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
-		
-		HttpHeaders headers = new HttpHeaders();
-		headers.add("Content-type", "application/json;charset=utf-8");
-		
-		HttpEntity<MultiValueMap<String, String>> entity = new HttpEntity<>(params, headers); 
-		RestTemplate rt = new RestTemplate();
-		ObjectMapper mapper = new ObjectMapper();
-		
-		try {
-		JsonNode response =rt.getForObject("http://13.125.152.144:5555/chain/findAllnfts", JsonNode.class,entity );
-    	
-		
-    	JsonNode items =  response.get("items");
-    	System.out.println(items);
-    	List<PostsSaveRequestDto> accountList = mapper.convertValue(
-    		    items,
-    		    new TypeReference<List<PostsSaveRequestDto>>(){}
-    		);
-    	//동기화하여 추가한 아이템 수 체크
-    	int count = 0;
-    	
-    	for(int i =0; i<accountList.size(); i++) {
-    		if(postsRepository.checkID(accountList.get(i).getToken_id()).isEmpty()) {
-    		postsRepository.save(accountList.get(i).toEntity());
-    		count++;
-    		
-    	    } 
-    	}
-		
-		JSONObject resultObj = new JSONObject();  
-		resultObj.put("result","true");
-		resultObj.put("count",count);
-    	
-    	return new ResponseEntity<JSONObject>(resultObj, HttpStatus.ACCEPTED);
-    	
-		} catch (Exception e) {
-			JSONObject resultObj = new JSONObject();  
-			resultObj.put("result","false");
-	    	return new ResponseEntity<JSONObject>(resultObj, HttpStatus.ACCEPTED);
-		}
-    }
+
     
     //DB에 저장된 지갑 주소 기반으로 게시물들의 정보를 페이지 형태로 불러옴
     //프젝 발표 이후 수정
@@ -247,7 +195,12 @@ public class PostsService {
     }
     
     //nft 아이템 trade
+    @Transactional
     public ResponseEntity<JSONObject> nfttrade(NftTradeDto tradeDto) {
+    	// sell_state가 1일때만 거래 가능
+    	JSONObject resultObj = new JSONObject();  
+    	if(postsRepository.findBytokenID(tradeDto.getToken_id()).get().getSell_state() == 1) {
+    	
     	
 		RestTemplate rt = new RestTemplate();
 				
@@ -256,7 +209,7 @@ public class PostsService {
 
 	
 		JSONObject createData = new JSONObject();
-		JSONObject resultObj = new JSONObject();  
+		
 		
 
 		createData.put("to", tradeDto.getTo());
@@ -272,7 +225,14 @@ public class PostsService {
 		
 		try {
 		ResponseEntity<JSONObject> result =rt.exchange(uri, HttpMethod.PUT, entity, JSONObject.class);
+		
+		//거래 성공한 아이템의 sell_state를 3으로 바꿈
+		System.out.println(result);
+		System.out.println(result.getBody().get("token_id"));
+		Optional<Posts> posts = postsRepository.findBytokenID((String)result.getBody().get("token_id"));
+		posts.get().stateUpdate(3);
 		resultObj.put("result","true");
+		resultObj.put("hash",result.getBody().get("hash"));
 		return new ResponseEntity<JSONObject>(resultObj, HttpStatus.ACCEPTED);
 		
 		}
@@ -281,6 +241,15 @@ public class PostsService {
 			return new ResponseEntity<JSONObject>(resultObj, HttpStatus.FORBIDDEN);
 			
 		}
+		
+    	}
+    	
+    	//sell_state가 1이 아닌 아이템을 거래할려고 할시
+    	else {
+    		resultObj.put("result","false");
+    		resultObj.put("reason","sell_state is not 1");
+    		return new ResponseEntity<JSONObject>(resultObj, HttpStatus.BAD_REQUEST);
+    	}
     }
     
 

@@ -17,7 +17,7 @@ public class PagingDto {
 	private Long id ;
 	private String title ;
 	private int sell_state;
-	private long price;
+	private float price;
 	private LocalDateTime createdDate ;
 	private LocalDateTime ModifiedDate ;
 	private String nft_description;

@@ -9,7 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
-import post.service.PostsService;
+import post.service.SchedulerService;
 
 
 
@@ -17,11 +17,17 @@ import post.service.PostsService;
 public class Scheduler { 
 	
 	@Autowired
-	private PostsService postsService;
+	private SchedulerService schedulerService;
 	
-	//2분에 한번 동기화를 시행한다.
+	//동기화를 2분에 한번 동기화를 시행한다.
     @Scheduled(cron = "0 0/2 * * * ?") 
     public void runSync() { 
-    	postsService.recvNftInfofromBlckdb();
+    	schedulerService.recvNftInfofromBlckdb();
+    } 
+    
+    //sell_state 변경을 2분에 한번 확인하고 변경한다.
+    @Scheduled(cron = "5 0/2 * * * ?") 
+    public void runRevertTime() { 
+    	schedulerService.revertState();
     } 
 }

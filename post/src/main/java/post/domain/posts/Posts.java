@@ -31,7 +31,7 @@ public class Posts  {
     private int sell_state;
     
     @Column(nullable = false)
-    private long price;
+    private float price;
     
 	@Column()
 	private String nft_description;
@@ -56,7 +56,7 @@ public class Posts  {
     
 
     @Builder
-    public Posts(String title, long price, String nft_description, String nft_hash, String token_id, String creator, String image_path, String owner, LocalDateTime createdDate, LocalDateTime modifiedDate ) {
+    public Posts(String title, float price, String nft_description, String nft_hash, String token_id, String creator, String image_path, String owner, LocalDateTime createdDate, LocalDateTime modifiedDate ) {
         this.title = title;    
         this.sell_state = 0 ;
         this.price = price ;
@@ -71,11 +71,16 @@ public class Posts  {
         
     }
     // price 업데이트
-    public void update(long price) {
+    public void update(float price) {
         this.price = price;
     }
-    
+    //sell_state 업데이트
     public void stateUpdate(int sell_state) {
     	this.sell_state = sell_state;
+    }
+    
+    public void synUpdate(String owner, LocalDateTime modifiedDate ) {
+    	this.owner = owner ;
+    	this.modifiedDate = modifiedDate ;
     }
 }

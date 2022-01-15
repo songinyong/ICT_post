@@ -1,5 +1,6 @@
 package post.domain.posts;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -37,4 +38,7 @@ public interface PostsRepository extends JpaRepository<Posts, Long> {
     
     @Query("SELECT p FROM Posts p WHERE p.owner NOT IN :wallet AND p.sell_state = :sell_state")
     Page<Posts> findNotWalletAndSellState(Pageable pageable, String wallet, int sell_state);
+    
+    @Query(nativeQuery = true, value= "SELECT * FROM selled")
+    List<RevertState> findRevertState();
 }

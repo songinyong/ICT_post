@@ -18,7 +18,7 @@ public class PostsResponseDto {
 	private Long id ;
 	private String title ;
 	private int sell_state;
-	private long price;
+	private float price;
 	
 	private LocalDateTime createdDate ;
 	

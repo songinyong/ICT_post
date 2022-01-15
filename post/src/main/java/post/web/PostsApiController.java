@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import lombok.RequiredArgsConstructor;
 import post.service.PostsService;
+import post.service.SchedulerService;
 import post.web.dto.NftTradeDto;
 import post.web.dto.PageGetDto;
 import post.web.dto.PagingDto;
@@ -28,6 +29,7 @@ public class PostsApiController {
 
 	private final PostsService postsService;
 	
+	private final SchedulerService scheduler;
 	//전체 게시물 정보 불러옴 - 초기 버전 현재 제거
 	/*
 	@PostMapping("/posts")
@@ -53,6 +55,7 @@ public class PostsApiController {
 	//게시물 price 변경
     @PutMapping(path="/posts/price/{token_id}", consumes="application/json")
     public boolean update(@PathVariable String token_id, @RequestBody PostsUpdateRequestDto requestDto) {
+    	System.out.println(requestDto.getPrice());
         return postsService.updatePrice(token_id, requestDto);
     }
     
@@ -75,7 +78,7 @@ public class PostsApiController {
     }
     
     //특정 지갑 주소를 제외한 전체 AND sell_state 기준 페이지로 출력
-    @PostMapping("/posts/Market/{owner}")
+    @GetMapping("/posts/Market/{owner}")
     public Page<PagingDto> pageNotwalletandsellState(@PathVariable String owner, @PageableDefault(size=10, sort="createdDate") Pageable pageRequest) {
     	return postsService.findByNotWalletAndSellState(owner, pageRequest);
     }
@@ -99,12 +102,18 @@ public class PostsApiController {
 		return postsService.nftinfoFromblock("0xbc7cc9517400cff0ec953efb585e424301a395b0");
 	}
 	
+	/* 동기화는 스케줄러로 돌리도록 수정함
 	@GetMapping("/posts/blck/item")
 	public ResponseEntity<JSONObject> testPost() {
 		return postsService.recvNftInfofromBlckdb();
+	}*/
+	
+	@GetMapping("/posts/blck/item")
+	public void testPost() {
+		scheduler.revertState();
 	}
 	//nft 거래 api
-	@PostMapping("/posts/trade")
+	@PutMapping("/posts/trade")
 	public ResponseEntity<JSONObject> nftTrade(@RequestBody NftTradeDto nfttradedto) {
 		return postsService.nfttrade(nfttradedto);
 	}
