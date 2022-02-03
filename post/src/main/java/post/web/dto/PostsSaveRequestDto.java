@@ -31,6 +31,7 @@ public class PostsSaveRequestDto {
 	private String nft_description;
 	private String nft_hash;
 	private String token_id;
+	private String token_name;
 	private String creator;
 	private String image_path ;
 	private String owner;
@@ -39,13 +40,14 @@ public class PostsSaveRequestDto {
 	//is_sell은 판매중 0 , 거래중 1, 판매완료 2 3개의 상태를 가지고 있으면 기본적으로 등록시에는 0이 디폴트이다.
 	
     @Builder
-    public PostsSaveRequestDto(String title, float price, String nft_description, String nft_hash, String token_id, String creator, String image_path, String owner, LocalDateTime createdDate, LocalDateTime modifiedDate ) {
+    public PostsSaveRequestDto(String title, float price, String nft_description, String nft_hash, String token_id, String token_name ,String creator, String image_path, String owner, LocalDateTime createdDate, LocalDateTime modifiedDate ) {
         this.title = title;    
        
         this.price = price ;
         this.nft_description = nft_description;
         this.nft_hash = nft_hash;
         this.token_id = token_id;
+        this.token_name = token_name;
         this.creator = creator;
         this.image_path = image_path;
         this.owner = owner;
@@ -60,6 +62,7 @@ public class PostsSaveRequestDto {
 				.nft_description(nft_description)
 				.nft_hash(nft_hash)
 				.token_id(token_id)
+				.token_name(token_name)
 				.creator(creator)
 				.image_path(image_path)
 				.owner(owner)

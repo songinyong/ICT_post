@@ -41,7 +41,8 @@ public class Posts  {
 	//아이템 아이디를 16진수롤 변환해서 저장
 	@Column()
 	private String token_id ;
-
+	@Column()
+	private String token_name ;
 	@Column()
 	private String creator;
 	@Column()
@@ -56,13 +57,14 @@ public class Posts  {
     
 
     @Builder
-    public Posts(String title, float price, String nft_description, String nft_hash, String token_id, String creator, String image_path, String owner, LocalDateTime createdDate, LocalDateTime modifiedDate ) {
+    public Posts(String title, float price, String nft_description, String nft_hash, String token_id, String token_name, String creator, String image_path, String owner, LocalDateTime createdDate, LocalDateTime modifiedDate ) {
         this.title = title;    
         this.sell_state = 0 ;
         this.price = price ;
         this.nft_description = nft_description;
         this.nft_hash = nft_hash;
         this.token_id = token_id;
+        this.token_name = token_name;
         this.creator = creator;
         this.image_path = image_path;
         this.owner = owner;

@@ -8,10 +8,13 @@
 
 package post.service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.json.simple.JSONObject;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpEntity;
@@ -30,8 +33,12 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import lombok.RequiredArgsConstructor;
+import post.domain.posts.Favorite;
+import post.domain.posts.FavoriteRepository;
 import post.domain.posts.Posts;
 import post.domain.posts.PostsRepository;
+import post.web.dto.FavoriteDto;
+import post.web.dto.FavoriteResponseDto;
 import post.web.dto.NftTradeDto;
 import post.web.dto.PageGetDto;
 import post.web.dto.PagingDto;
@@ -42,7 +49,11 @@ import post.web.dto.PostsUpdateRequestDto;
 @RequiredArgsConstructor
 @Service
 public class PostsService {
-    private final PostsRepository postsRepository;
+	@Autowired
+	PostsRepository postsRepository;
+    
+    @Autowired
+    FavoriteRepository favoriteRepository;
     
     
     /*게시물 가격 수정 기능
@@ -200,8 +211,7 @@ public class PostsService {
     	// sell_state가 1일때만 거래 가능
     	JSONObject resultObj = new JSONObject();  
     	if(postsRepository.findBytokenID(tradeDto.getToken_id()).get().getSell_state() == 1) {
-    	
-    	
+    		
 		RestTemplate rt = new RestTemplate();
 				
 		HttpHeaders headers = new HttpHeaders();
@@ -210,40 +220,35 @@ public class PostsService {
 	
 		JSONObject createData = new JSONObject();
 		
-		
-
 		createData.put("to", tradeDto.getTo());
 		createData.put("sender",tradeDto.getSender());
 		createData.put("owner" ,tradeDto.getOwner());
 		createData.put("token_id", tradeDto.getToken_id());
-
 
 		 HttpEntity<String> entity = 
 			      new HttpEntity<String>(createData.toString(), headers);
 		System.out.println(entity);
 		String uri = "http://13.125.152.144:5555/chain/trade";
 		
-		try {
-		ResponseEntity<JSONObject> result =rt.exchange(uri, HttpMethod.PUT, entity, JSONObject.class);
+			try {
+				ResponseEntity<JSONObject> result =rt.exchange(uri, HttpMethod.PUT, entity, JSONObject.class);
 		
-		//거래 성공한 아이템의 sell_state를 3으로 바꿈
-		System.out.println(result);
-		System.out.println(result.getBody().get("token_id"));
-		Optional<Posts> posts = postsRepository.findBytokenID((String)result.getBody().get("token_id"));
-		posts.get().stateUpdate(3);
-		resultObj.put("result","true");
-		resultObj.put("hash",result.getBody().get("hash"));
-		return new ResponseEntity<JSONObject>(resultObj, HttpStatus.ACCEPTED);
+				//거래 성공한 아이템의 sell_state를 3으로 바꿈
+				System.out.println(result);
+				System.out.println(result.getBody().get("token_id"));
+				Optional<Posts> posts = postsRepository.findBytokenID((String)result.getBody().get("token_id"));
+				posts.get().stateUpdate(3);
+				resultObj.put("result","true");
+				resultObj.put("hash",result.getBody().get("hash"));
+				return new ResponseEntity<JSONObject>(resultObj, HttpStatus.ACCEPTED);
 		
-		}
-		catch (Exception e) {
-			resultObj.put("result","false");
-			return new ResponseEntity<JSONObject>(resultObj, HttpStatus.FORBIDDEN);
-			
-		}
+			}
+			catch (Exception e) {
+				resultObj.put("result","false");
+				return new ResponseEntity<JSONObject>(resultObj, HttpStatus.FORBIDDEN);	
+			}
 		
-    	}
-    	
+    	}	
     	//sell_state가 1이 아닌 아이템을 거래할려고 할시
     	else {
     		resultObj.put("result","false");
@@ -251,6 +256,85 @@ public class PostsService {
     		return new ResponseEntity<JSONObject>(resultObj, HttpStatus.BAD_REQUEST);
     	}
     }
-    
 
-}
+
+    /*즐겨찾기 추가*/
+    public ResponseEntity<JSONObject> addFavorite(FavoriteDto favorite) {
+    	JSONObject resultObj = new JSONObject();  
+    	try {
+    		favoriteRepository.save(favorite.toEntity()) ;
+    		resultObj.put("result","true");
+    		return new ResponseEntity<JSONObject>(resultObj, HttpStatus.ACCEPTED);
+    	}
+    	catch (Exception e) {
+    		resultObj.put("result","true");
+    		resultObj.put("reason",e);
+    		return new ResponseEntity<JSONObject>(resultObj, HttpStatus.ACCEPTED);
+    	}
+    	
+    }
+    /*즐겨찾기 삭제 표시
+     * 제거할 아이템임을 Y로 Update
+     **/
+    @Transactional
+    private ResponseEntity<JSONObject> updateFavorite(String token_id) {
+    	JSONObject resultObj = new JSONObject();
+    	try {
+    		
+    		for(Favorite f : favoriteRepository.findByTokenId(token_id)) 
+    			f.update(1);
+    		
+    		resultObj.put("result","true");
+    		return new ResponseEntity<JSONObject>(resultObj, HttpStatus.ACCEPTED);
+    	}
+    	catch (Exception e) {
+    		resultObj.put("result","false");
+    		resultObj.put("reason",e);
+    		return new ResponseEntity<JSONObject>(resultObj, HttpStatus.ACCEPTED);
+    	}
+    }
+ 
+    /*wallet 주소 기준 delItem 1인 favorite들은 전부 제거  */
+    @Transactional
+    private List<String> delFavorite(String wallet) {
+    
+    	try {
+    		List<String> delList = new ArrayList<String>();
+    		for(Favorite f : favoriteRepository.findByWallet(wallet, 1)) {
+    			favoriteRepository.delete(f) ;
+    			delList.add(f.getToken_id());
+    		}
+    		
+    		return delList;
+    	}
+    	catch (Exception e) {
+
+    		return null;
+    	}
+    }
+    
+    /*즐겨찾기 조회
+     * 삭제 메소드 한번 호출*/
+    @Transactional
+    public ResponseEntity<JSONObject> findFavorite(String wallet) {
+    	JSONObject resultObj = new JSONObject();
+    	List<String> delList = delFavorite(wallet) ;
+    	if(delList != null) {
+    		List<FavoriteResponseDto> get = favoriteRepository.findByWallet(wallet).stream()
+                .map(FavoriteResponseDto::new)
+                .collect(Collectors.toList());
+    		resultObj.put("result","true");
+    		resultObj.put("List", get);
+    		resultObj.put("delList", delList);
+    		
+    		return new ResponseEntity<JSONObject>(resultObj, HttpStatus.ACCEPTED);
+    		
+    	}
+    	else {
+    		resultObj.put("result","false");
+    		return new ResponseEntity<JSONObject>(resultObj, HttpStatus.ACCEPTED);
+    	}
+    }
+}   
+
+

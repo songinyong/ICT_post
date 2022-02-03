@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 import lombok.RequiredArgsConstructor;
 import post.service.PostsService;
 import post.service.SchedulerService;
+import post.web.dto.FavoriteDto;
 import post.web.dto.NftTradeDto;
 import post.web.dto.PageGetDto;
 import post.web.dto.PagingDto;
@@ -117,4 +118,17 @@ public class PostsApiController {
 	public ResponseEntity<JSONObject> nftTrade(@RequestBody NftTradeDto nfttradedto) {
 		return postsService.nfttrade(nfttradedto);
 	}
+	
+	//favorite 등록
+	@GetMapping("/posts/Addfavorite")
+	public ResponseEntity<JSONObject> createFavorite(@RequestBody FavoriteDto favoritedto) {
+		return postsService.addFavorite(favoritedto);
+	}
+	
+	//favorite get
+	@GetMapping("/posts/favorite/{wallet_address}")
+	public ResponseEntity<JSONObject> getFavorite(@PathVariable String wallet_address) {
+		return postsService.findFavorite(wallet_address);
+	}
+	
 }

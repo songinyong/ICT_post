@@ -42,7 +42,7 @@ public class SchedulerService {
      * */
     @Transactional
     public ResponseEntity<JSONObject> recvNftInfofromBlckdb() {
-		MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
+    	MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
 		
 		HttpHeaders headers = new HttpHeaders();
 		headers.add("Content-type", "application/json;charset=utf-8");
