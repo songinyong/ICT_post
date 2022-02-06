@@ -11,12 +11,16 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import lombok.RequiredArgsConstructor;
 import post.service.PostsService;
 import post.service.SchedulerService;
+import post.service.TradeService;
+import post.service.WalletService;
 import post.web.dto.FavoriteDto;
+import post.web.dto.GetNftIdDto;
 import post.web.dto.NftTradeDto;
 import post.web.dto.PageGetDto;
 import post.web.dto.PagingDto;
@@ -29,6 +33,8 @@ import post.web.dto.PostsUpdateRequestDto;
 public class PostsApiController {
 
 	private final PostsService postsService;
+	private final TradeService tradeService;
+	private final WalletService walletService;
 	
 	private final SchedulerService scheduler;
 	//전체 게시물 정보 불러옴 - 초기 버전 현재 제거
@@ -103,12 +109,6 @@ public class PostsApiController {
 		return postsService.nftinfoFromblock("0xbc7cc9517400cff0ec953efb585e424301a395b0");
 	}
 	
-	/* 동기화는 스케줄러로 돌리도록 수정함
-	@GetMapping("/posts/blck/item")
-	public ResponseEntity<JSONObject> testPost() {
-		return postsService.recvNftInfofromBlckdb();
-	}*/
-	
 	@GetMapping("/posts/blck/item")
 	public void testPost() {
 		scheduler.revertState();
@@ -116,11 +116,12 @@ public class PostsApiController {
 	//nft 거래 api
 	@PutMapping("/posts/trade")
 	public ResponseEntity<JSONObject> nftTrade(@RequestBody NftTradeDto nfttradedto) {
-		return postsService.nfttrade(nfttradedto);
+		return tradeService.chgStat(nfttradedto);
 	}
 	
+	
 	//favorite 등록
-	@GetMapping("/posts/Addfavorite")
+	@PutMapping("/posts/favorite")
 	public ResponseEntity<JSONObject> createFavorite(@RequestBody FavoriteDto favoritedto) {
 		return postsService.addFavorite(favoritedto);
 	}
@@ -130,5 +131,16 @@ public class PostsApiController {
 	public ResponseEntity<JSONObject> getFavorite(@PathVariable String wallet_address) {
 		return postsService.findFavorite(wallet_address);
 	}
+	
+	@GetMapping("/posts/ft")
+	public ResponseEntity<JSONObject> getNumOfFt(@RequestParam("address") String wallet_address) {
+		return walletService.getNumOfFt(wallet_address);
+	}
+	
+	@GetMapping("/posts/contractInfo")
+	public ResponseEntity<JSONObject> getContractInfo(@RequestBody GetNftIdDto getNftIdDto) {
+		return walletService.getContractInfo(getNftIdDto);
+	}
+	
 	
 }

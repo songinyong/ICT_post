@@ -1,6 +1,6 @@
 /*
  * Scheduler 관련 Service
- * 
+ * 클라이언트가 호출할 수 있는 api 제공안함
  * */
 
 package post.service;

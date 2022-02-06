@@ -16,13 +16,12 @@ public class FavoriteDto {
     private String tokenId;
     private String wallet;
 	private LocalDateTime createdDate ;
-    private int delItem;
+  
     
-    public FavoriteDto(String tokenId, String wallet, LocalDateTime createdDate, int delItem  ) {
+    public FavoriteDto(String tokenId, String wallet, LocalDateTime createdDate ) {
     	this.tokenId = tokenId ;
     	this.wallet = wallet ;
     	this.createdDate = createdDate ;
-    	this.delItem = delItem ;
     }
     
     public Favorite toEntity() {
@@ -30,7 +29,7 @@ public class FavoriteDto {
     			.tokenId(tokenId)
     			.wallet(wallet)
     			.createdDate(createdDate)
-    			.delItem(delItem)
+    			.delItem(0)
     			.build() ;
     }
 }

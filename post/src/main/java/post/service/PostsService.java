@@ -4,6 +4,7 @@
  * 
  * 21.12.08: ICT 발표전 최종 수정일 
  * 21.01.11: 기능이 많아짐에 따라 postService의 기능을 여러개의 클래스에 나눌 예정 
+ * 22.02.05: 거래 기능과 게시물 조회 기능들을 별개의 서비스로 분리
  * */
 
 package post.service;
@@ -205,59 +206,7 @@ public class PostsService {
     	return pagingList ;
     }
     
-    //nft 아이템 trade
-    @Transactional
-    public ResponseEntity<JSONObject> nfttrade(NftTradeDto tradeDto) {
-    	// sell_state가 1일때만 거래 가능
-    	JSONObject resultObj = new JSONObject();  
-    	if(postsRepository.findBytokenID(tradeDto.getToken_id()).get().getSell_state() == 1) {
-    		
-		RestTemplate rt = new RestTemplate();
-				
-		HttpHeaders headers = new HttpHeaders();
-		headers.add("Content-type", "application/json");
-
-	
-		JSONObject createData = new JSONObject();
-		
-		createData.put("to", tradeDto.getTo());
-		createData.put("sender",tradeDto.getSender());
-		createData.put("owner" ,tradeDto.getOwner());
-		createData.put("token_id", tradeDto.getToken_id());
-
-		 HttpEntity<String> entity = 
-			      new HttpEntity<String>(createData.toString(), headers);
-		System.out.println(entity);
-		String uri = "http://13.125.152.144:5555/chain/trade";
-		
-			try {
-				ResponseEntity<JSONObject> result =rt.exchange(uri, HttpMethod.PUT, entity, JSONObject.class);
-		
-				//거래 성공한 아이템의 sell_state를 3으로 바꿈
-				System.out.println(result);
-				System.out.println(result.getBody().get("token_id"));
-				Optional<Posts> posts = postsRepository.findBytokenID((String)result.getBody().get("token_id"));
-				posts.get().stateUpdate(3);
-				resultObj.put("result","true");
-				resultObj.put("hash",result.getBody().get("hash"));
-				return new ResponseEntity<JSONObject>(resultObj, HttpStatus.ACCEPTED);
-		
-			}
-			catch (Exception e) {
-				resultObj.put("result","false");
-				return new ResponseEntity<JSONObject>(resultObj, HttpStatus.FORBIDDEN);	
-			}
-		
-    	}	
-    	//sell_state가 1이 아닌 아이템을 거래할려고 할시
-    	else {
-    		resultObj.put("result","false");
-    		resultObj.put("reason","sell_state is not 1");
-    		return new ResponseEntity<JSONObject>(resultObj, HttpStatus.BAD_REQUEST);
-    	}
-    }
-
-
+ 
     /*즐겨찾기 추가*/
     public ResponseEntity<JSONObject> addFavorite(FavoriteDto favorite) {
     	JSONObject resultObj = new JSONObject();  
