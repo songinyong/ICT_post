@@ -2,8 +2,6 @@
 
 package post.web.dto;
 
-import java.time.LocalDateTime;
-
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import post.domain.posts.Favorite;
@@ -14,21 +12,18 @@ public class FavoriteDto {
 	
 
     private String tokenId;
-    private String wallet;
-	private LocalDateTime createdDate ;
+    private String wallet_address;
   
     
-    public FavoriteDto(String tokenId, String wallet, LocalDateTime createdDate ) {
+    public FavoriteDto(String tokenId, String wallet_address ) {
     	this.tokenId = tokenId ;
-    	this.wallet = wallet ;
-    	this.createdDate = createdDate ;
+    	this.wallet_address = wallet_address ;
     }
     
     public Favorite toEntity() {
     	return Favorite.builder()
     			.tokenId(tokenId)
-    			.wallet(wallet)
-    			.createdDate(createdDate)
+    			.wallet(wallet_address)
     			.delItem(0)
     			.build() ;
     }

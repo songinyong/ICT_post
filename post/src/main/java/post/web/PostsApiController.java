@@ -62,7 +62,6 @@ public class PostsApiController {
 	//게시물 price 변경
     @PutMapping(path="/posts/price/{token_id}", consumes="application/json")
     public boolean update(@PathVariable String token_id, @RequestBody PostsUpdateRequestDto requestDto) {
-    	System.out.println(requestDto.getPrice());
         return postsService.updatePrice(token_id, requestDto);
     }
     
@@ -85,9 +84,9 @@ public class PostsApiController {
     }
     
     //특정 지갑 주소를 제외한 전체 AND sell_state 기준 페이지로 출력
-    @GetMapping("/posts/Market/{owner}")
-    public Page<PagingDto> pageNotwalletandsellState(@PathVariable String owner, @PageableDefault(size=10, sort="createdDate") Pageable pageRequest) {
-    	return postsService.findByNotWalletAndSellState(owner, pageRequest);
+    @GetMapping("/posts/Market/{wallet_address}")
+    public Page<PagingDto> pageNotwalletandsellState(@PathVariable String wallet_address, @PageableDefault(size=10, sort="createdDate") Pageable pageRequest) {
+    	return postsService.findByNotWalletAndSellState(wallet_address, pageRequest);
     }
     
     //전체 게시물들의 정보를 페이지 형태로 불러옴
@@ -132,12 +131,14 @@ public class PostsApiController {
 		return postsService.findFavorite(wallet_address);
 	}
 	
+	//ft 수량 조회
 	@GetMapping("/posts/ft")
-	public ResponseEntity<JSONObject> getNumOfFt(@RequestParam("address") String wallet_address) {
+	public ResponseEntity<JSONObject> getNumOfFt(@RequestParam("wallet_address") String wallet_address) {
 		return walletService.getNumOfFt(wallet_address);
 	}
 	
-	@GetMapping("/posts/contractInfo")
+	//컨트랙트 정보 조회
+	@PostMapping("/posts/contractInfo")
 	public ResponseEntity<JSONObject> getContractInfo(@RequestBody GetNftIdDto getNftIdDto) {
 		return walletService.getContractInfo(getNftIdDto);
 	}

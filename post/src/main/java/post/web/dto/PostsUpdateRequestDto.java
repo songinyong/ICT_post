@@ -15,9 +15,11 @@ import lombok.NoArgsConstructor;
 public class PostsUpdateRequestDto {
 
 	private float price;
+	private String wallet_address;
 	
 	@Builder
-	public PostsUpdateRequestDto(float price) {
+	public PostsUpdateRequestDto(float price, String wallet_address) {
 		this.price = price ;
+		this.wallet_address = wallet_address ;
 	}
 }

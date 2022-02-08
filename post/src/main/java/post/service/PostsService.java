@@ -190,7 +190,7 @@ public class PostsService {
     public Page<PagingDto> findByWalletAndSellState(Pageable pageRequest, PageGetDto pgdto) {
     	
     	//결과 값이 null 이여도 Page가 빈 객체로 return해줌 
-    	Page<Posts> postsList = postsRepository.findWalletAndSellState(pageRequest, pgdto.getOwner(), pgdto.getSell_state());		
+    	Page<Posts> postsList = postsRepository.findWalletAndSellState(pageRequest, pgdto.getWallet_address(), pgdto.getSell_state());		
     	Page<PagingDto> pagingList = postsList.map(PagingDto::new);
     	
     	return pagingList ;

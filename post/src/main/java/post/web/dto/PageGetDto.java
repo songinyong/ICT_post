@@ -1,6 +1,5 @@
 package post.web.dto;
 
-import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -9,12 +8,12 @@ import lombok.NoArgsConstructor;
 public class PageGetDto {
 
 	private int sell_state;
-	private String owner;
+	private String wallet_address;
 	
 	
-	public PageGetDto(int sell_state, String owner) {
+	public PageGetDto(int sell_state, String wallet_address) {
 		this.sell_state = sell_state;
-		this.owner = owner;
+		this.wallet_address = wallet_address;
 	}
 	
 	
