@@ -1,6 +1,7 @@
 package post.web;
 
 import org.json.simple.JSONObject;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
@@ -13,6 +14,8 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+
+import com.fasterxml.jackson.core.JsonProcessingException;
 
 import lombok.RequiredArgsConstructor;
 import post.service.PostsService;
@@ -143,5 +146,10 @@ public class PostsApiController {
 		return walletService.getContractInfo(getNftIdDto);
 	}
 	
-	
+
+
+	@GetMapping("/rabit/{i}")
+	public void process(@PathVariable String i) throws JsonProcessingException {
+		 postsService.rabbitTest(i) ;
+	}
 }

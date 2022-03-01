@@ -16,6 +16,9 @@ import java.util.stream.Collectors;
 
 import org.json.simple.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cloud.stream.annotation.StreamListener;
+import org.springframework.cloud.stream.messaging.Processor;
+import org.springframework.context.annotation.Bean;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpEntity;
@@ -29,11 +32,13 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import lombok.RequiredArgsConstructor;
+import post.domain.channel.NftInfoSender;
 import post.domain.posts.Favorite;
 import post.domain.posts.FavoriteRepository;
 import post.domain.posts.Posts;
@@ -57,6 +62,7 @@ public class PostsService {
     FavoriteRepository favoriteRepository;
     
     
+   
     /*게시물 가격 수정 기능
      * 21.01.03 수정사항: sell_state가 0일때만 가격을 수정할 수 있도록 해야함
      * 21.01.11 결과값 json으로 수정 필요
@@ -172,7 +178,6 @@ public class PostsService {
 		return "hey" ;
     }
     
-
     
     //DB에 저장된 지갑 주소 기반으로 게시물들의 정보를 페이지 형태로 불러옴
     //프젝 발표 이후 수정
@@ -284,6 +289,19 @@ public class PostsService {
     		return new ResponseEntity<JSONObject>(resultObj, HttpStatus.ACCEPTED);
     	}
     }
+    
+    
+    @Autowired
+    NftInfoSender testSender ;
+    //블록체인 서비스로부터 사용자 지갑별로 가지고 있는 nft 아이템 정보를 받아옴(RabbitMq 사용)
+    public String rabbitTest(String wallet_address) throws JsonProcessingException {
+		
+    	
+		boolean success = testSender.send(wallet_address);
+		System.out.println(success);
+				        
+		return "test" ;
+    } 
 }   
 
 

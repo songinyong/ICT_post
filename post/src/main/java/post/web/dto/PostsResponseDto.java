@@ -1,5 +1,5 @@
 /*
- * PostsR
+ *
  * */
 
 package post.web.dto;

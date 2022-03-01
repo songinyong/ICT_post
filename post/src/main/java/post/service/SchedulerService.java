@@ -35,7 +35,7 @@ import post.web.dto.PostsSaveRequestDto;
 @Service
 public class SchedulerService {
 	private final PostsRepository postsRepository;
-	
+
     /*
      * 블록체인 아이템 DB로부터 정보를 받아온뒤 nft token_id를 기준으로 DB에 없는 아이템들을 추가한다.
      * crontab으로 동기화 시행

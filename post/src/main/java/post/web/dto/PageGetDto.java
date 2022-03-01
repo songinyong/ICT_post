@@ -1,3 +1,7 @@
+/*
+ * Post 정보를 필터링하라는 사용자 요청를 받기 위해 사용 
+ * */
+
 package post.web.dto;
 
 import lombok.Getter;

@@ -136,6 +136,8 @@ public class TradeService {
 		}
     	
     }
+    
+    
 	
 	//거래 성공 여부를 Y이면서 sell_state가 2인 아이템의 nft 소유권을 이전
     @Transactional
