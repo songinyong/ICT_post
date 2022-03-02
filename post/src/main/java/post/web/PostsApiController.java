@@ -150,6 +150,7 @@ public class PostsApiController {
 
 	@GetMapping("/rabit/{i}")
 	public void process(@PathVariable String i) throws JsonProcessingException {
+		System.out.println(i);
 		 postsService.rabbitTest(i) ;
 	}
 }
