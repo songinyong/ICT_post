@@ -12,8 +12,8 @@ public interface NftInfoChannel {
 	String INPUT = "nftInfoIn";
     String OUTPUT = "nftInfoOut";
 
-    //@Input(INPUT)
-    //SubscribableChannel nftInfoIn();
+    @Input(INPUT)
+    SubscribableChannel nftInfoIn();
 
     @Output(OUTPUT)
     MessageChannel nftInfoOut();
