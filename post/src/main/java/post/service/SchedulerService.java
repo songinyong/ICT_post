@@ -52,7 +52,7 @@ public class SchedulerService {
 		ObjectMapper mapper = new ObjectMapper();
 		
 		try {
-		JsonNode response =rt.getForObject("http://13.125.152.144:5555/chain/findAllnfts", JsonNode.class,entity );
+		JsonNode response =rt.getForObject("http://54.180.114.232:5555/chain/findAllnfts", JsonNode.class,entity );
     	
 		
     	JsonNode items =  response.get("items");

@@ -119,7 +119,7 @@ public class TradeService {
 		 HttpEntity<String> entity = 
 			      new HttpEntity<String>(createData.toString(), headers);
 		 System.out.println(entity);
-    	String uri = "http://13.125.152.144:5555/chain/ftTrade";
+    	String uri = "http://54.180.114.232:5555/chain/ftTrade";
     	
 		try {
 			ResponseEntity<JSONObject> result =rt.exchange(uri, HttpMethod.POST, entity, JSONObject.class);
@@ -162,7 +162,7 @@ public class TradeService {
 		 HttpEntity<String> entity = 
 			      new HttpEntity<String>(createData.toString(), headers);
 	
-		String uri = "http://13.125.152.144:5555/chain/trade";
+		String uri = "http://54.180.114.232:5555/chain/trade";
 		
 			try {
 				ResponseEntity<JSONObject> result =rt.exchange(uri, HttpMethod.PUT, entity, JSONObject.class);

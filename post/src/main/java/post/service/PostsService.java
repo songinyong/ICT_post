@@ -162,7 +162,7 @@ public class PostsService {
 		RestTemplate rt = new RestTemplate();
 		ObjectMapper mapper = new ObjectMapper();
 		
-		JsonNode response =rt.postForObject("http://13.125.152.144:5555/chain/findnft?address="+wallet_address, entity, JsonNode.class);
+		JsonNode response =rt.postForObject("http://54.180.114.232:5555/chain/findnft?address="+wallet_address, entity, JsonNode.class);
 		
 
     	JsonNode items =  response.get("items");

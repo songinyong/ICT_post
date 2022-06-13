@@ -31,7 +31,7 @@ public class WalletService {
 		 HttpEntity<String> entity = 
 			      new HttpEntity<String>(createData.toString(), headers);
 		 
-    	String uri = "http://13.125.152.144:5555/chain/numOfFt?address="+wallet;
+    	String uri = "http://54.180.114.232:5555/chain/numOfFt?address="+wallet;
     	
 		try {
 			ResponseEntity<JSONObject> result =rt.exchange(uri, HttpMethod.GET, entity, JSONObject.class);
@@ -60,7 +60,7 @@ public class WalletService {
 		 HttpEntity<String> entity = 
 			      new HttpEntity<String>(createData.toString(), headers);
 		 
-    	String uri = "http://13.125.152.144:5555/chain/numOfFt?address="+wallet;
+    	String uri = "http://54.180.114.232:5555/chain/numOfFt?address="+wallet;
     	
 		try {
 			ResponseEntity<JSONObject> result =rt.exchange(uri, HttpMethod.GET, entity, JSONObject.class);
@@ -88,7 +88,7 @@ public class WalletService {
 		 HttpEntity<String> entity = 
 			      new HttpEntity<String>(createData.toString(), headers);
 		 
-    	String uri = "http://13.125.152.144:5555/chain/contractInfo" ;
+    	String uri = "http://54.180.114.232:5555/chain/contractInfo" ;
     	
 		try {
 			ResponseEntity<JSONObject> result =rt.exchange(uri, HttpMethod.POST, entity, JSONObject.class);
