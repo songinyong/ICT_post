@@ -16,8 +16,6 @@ import java.util.stream.Collectors;
 
 import org.json.simple.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cloud.stream.annotation.StreamListener;
-import org.springframework.cloud.stream.messaging.Processor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -38,7 +36,6 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import lombok.RequiredArgsConstructor;
-import post.domain.channel.NftInfoSender;
 import post.domain.posts.Favorite;
 import post.domain.posts.FavoriteRepository;
 import post.domain.posts.Posts;
@@ -291,17 +288,7 @@ public class PostsService {
     }
     
     
-    @Autowired
-    NftInfoSender testSender ;
-    //블록체인 서비스로부터 사용자 지갑별로 가지고 있는 nft 아이템 정보를 받아옴(RabbitMq 사용)
-    public String rabbitTest(String wallet_address) throws JsonProcessingException {
-		
-    	
-		boolean success = testSender.send(wallet_address);
-		System.out.println(success);
-				        
-		return "test" ;
-    } 
+
 }   
 
 

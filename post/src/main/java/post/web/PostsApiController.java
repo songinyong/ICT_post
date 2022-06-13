@@ -3,7 +3,7 @@ package post.web;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.ParseException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cloud.stream.annotation.StreamListener;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
@@ -19,7 +19,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 
-import post.domain.channel.NftInfoChannel;
 import lombok.RequiredArgsConstructor;
 import post.service.PostsService;
 import post.service.SchedulerService;
@@ -150,16 +149,4 @@ public class PostsApiController {
 	}
 	
 
-
-	@GetMapping("/rabit/{i}")
-	public void process(@PathVariable String i) throws JsonProcessingException {
-		System.out.println(i);
-		 postsService.rabbitTest(i) ;
-	}
-	
-    @StreamListener( NftInfoChannel.INPUT)
-    public void test(String wallet_address) throws ParseException {
-    	System.out.println(wallet_address);
-    	
-    }
 }
